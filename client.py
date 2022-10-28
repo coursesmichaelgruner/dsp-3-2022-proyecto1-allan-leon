@@ -1,13 +1,14 @@
 #!/usr/bin/python3
 
+from heapq import nsmallest
 import sounddevice as sd
 import numpy as np
 import sys
 import tty
 import termios
-import re
+from math import pi
 
-fs = 44100  # sample rate
+Fs = 8000  # sample rate
 valid_keys = '123A456B789C*0#D'
 cols_freqs = [1209, 1336, 1477, 1633]
 rows_freqs = [697, 770, 852, 941]
@@ -67,7 +68,21 @@ def row_col(ch: str, string: str):
     return (index//4), (index % 4)
 
 
-with sd.OutputStream(samplerate=fs, dtype='int16', latency='low', channels=1) as stream:
+n_samples = int(Fs)/4
+x = np.arange(0, n_samples)
+
+00
+def generate_tone(F1: int, F2: int):
+    f1 = F1/Fs
+    f2 = F2/Fs
+
+    samples = np.sin(2*pi*f1*x, dtype=np.float32) + \
+        np.sin(2*pi*f2*x, dtype=np.float32)
+
+    return samples
+
+
+with sd.OutputStream(samplerate=Fs, dtype='float32', latency='low', channels=1) as stream:
     while True:
 
         a = getch()
@@ -81,3 +96,4 @@ with sd.OutputStream(samplerate=fs, dtype='int16', latency='low', channels=1) as
             row_freq = rows_freqs[rc[0]]
             col_freq = cols_freqs[rc[1]]
             print(f'{a}: {row_freq},{col_freq}')
+            stream.write(generate_tone(row_freq, col_freq))
