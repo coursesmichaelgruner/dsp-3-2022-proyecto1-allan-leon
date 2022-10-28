@@ -14,6 +14,9 @@ rows_freqs = [697, 770, 852, 941]
 
 
 def getch():
+    '''
+    This method returns a char read from the stdin
+    '''
     # https://code.activestate.com/recipes/134892/
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
@@ -26,6 +29,15 @@ def getch():
 
 
 def indexof(ch: str, string: str):
+    '''
+    This method searches a character in a string
+    Parameters
+        string: string in which the char ch is looked up
+        ch: char to look up in string
+
+    Returns
+        -1 if ch is not found in string, otherwise the index of the char
+    '''
     ch = ch.lower()
     string = string.lower()
 
@@ -42,6 +54,12 @@ def indexof(ch: str, string: str):
 
 
 def row_col(ch: str, string: str):
+    '''
+    This method a value in the DTMF matrix
+
+    Returns
+        None if the value is not present in the matrix, otherwise a tuple of row,col
+    '''
     index = indexof(ch, string)
     if index == -1:
         return None
@@ -51,11 +69,14 @@ def row_col(ch: str, string: str):
 
 with sd.OutputStream(samplerate=fs, dtype='int16', latency='low', channels=1) as stream:
     while True:
-        termios.ECHO
+
         a = getch()
-        if a == '\x03':
+
+        if a == '\x03':  # ctrl-c
             break
+
         rc = row_col(a, valid_keys)
+
         if rc != None:
             row_freq = rows_freqs[rc[0]]
             col_freq = cols_freqs[rc[1]]
