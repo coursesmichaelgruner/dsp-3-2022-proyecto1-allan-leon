@@ -71,7 +71,7 @@ def row_col(ch: str, string: str):
 n_samples = int(Fs)/4
 x = np.arange(0, n_samples)
 
-00
+
 def generate_tone(F1: int, F2: int):
     f1 = F1/Fs
     f2 = F2/Fs
