@@ -8,6 +8,8 @@ import tty
 import termios
 from math import pi
 
+import time
+
 Fs = 8000  # sample rate
 valid_keys = '123A456B789C*0#D'
 cols_freqs = [1209, 1336, 1477, 1633]
@@ -68,7 +70,7 @@ def row_col(ch: str, string: str):
     return (index//4), (index % 4)
 
 
-n_samples = int(Fs/4)
+n_samples = int(Fs/8)
 x = np.arange(0, n_samples,dtype=np.float32)
 
 def generate_triangle(x,n_samples:int):
@@ -94,7 +96,6 @@ def generate_tone(F1: int, F2: int):
 
 with sd.OutputStream(samplerate=Fs, dtype='float32', latency='low', channels=1) as stream:
     while True:
-
         a = getch()
 
         if a == '\x03':  # ctrl-c
