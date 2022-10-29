@@ -68,9 +68,19 @@ def row_col(ch: str, string: str):
     return (index//4), (index % 4)
 
 
-n_samples = int(Fs)/4
-x = np.arange(0, n_samples)
+n_samples = int(Fs/4)
+x = np.arange(0, n_samples,dtype=np.float32)
 
+def generate_triangle(x,n_samples:int):
+    y = np.zeros(n_samples,dtype=np.float32)
+
+    y[0:len(x)//2]=x[0:len(x)//2]/(len(x)//2)
+
+    m=-1/(x[-1]-x[len(x)//2])
+    b=-m*x[-1]
+    y[len(x)//2:]=x[len(x)//2:]*m+b
+
+    return y
 
 def generate_tone(F1: int, F2: int):
     f1 = F1/Fs
@@ -79,7 +89,7 @@ def generate_tone(F1: int, F2: int):
     samples = np.sin(2*pi*f1*x, dtype=np.float32) + \
         np.sin(2*pi*f2*x, dtype=np.float32)
 
-    return samples
+    return samples*generate_triangle(x,n_samples)
 
 
 with sd.OutputStream(samplerate=Fs, dtype='float32', latency='low', channels=1) as stream:
