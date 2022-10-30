@@ -17,3 +17,7 @@ Adicionalmente de pip:
 ## Cliente
 `python3 cliente.py` 
 Usar el teclado de la computadora para generar los tonos DTMF
+
+## Servidor
+`python3 server.py`
+Esperar a que la terminar muestre el mensaje `listening..` para comenzar a ingresar los numeros
