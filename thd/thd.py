@@ -4,7 +4,7 @@ from heapq import nsmallest
 import sounddevice as sd
 import numpy as np
 from scipy import fftpack
-
+from scipy import signal
 from math import pi
 
 from matplotlib import pyplot as plt
@@ -19,15 +19,11 @@ thd = 0.0
 for F in freqs:
     Fs, samples = wavfile.read(f'{F}.wav')
 
-    X = fftpack.fft(samples)
-    fs = fftpack.fftfreq(len(samples)) * Fs
-    X = np.abs(X)
+    f, Pxx_den = signal.periodogram(samples, Fs)
 
-    X2 = X[len(X)//2:]
-    argmax = np.argmax(X2)
-    X2 =X2[argmax:]
+    argmax = np.argmax(Pxx_den)
 
-    this_thd = np.sqrt(np.sum(X2[2:]**2))/X2[0]*100
+    this_thd = (np.sum(Pxx_den[argmax+1:])+np.sum(Pxx_den[:argmax-1]))/np.sum(Pxx_den)*100
     print(f'{F} Hz: THD {this_thd:.2f}%')
 
     thd += this_thd
@@ -37,10 +33,10 @@ for F in freqs:
     col = counter % 2
 
     axes[row,col].set_title(f'{F} Hz')
-    axes[row,col].stem(fs, X)
+    axes[row,col].semilogy(f, Pxx_den)
     axes[row,col].set_xlabel('Frequency [Hz]')
     axes[row,col].set_ylabel('Spectrum Magnitude')
-    axes[row,col].set_xlim(-Fs / 2, Fs / 2)
+    axes[row,col].set_xlim(0, Fs / 2)
     counter += 1
 
 thd = thd/len(freqs)
