@@ -15,6 +15,7 @@ freqs = [1209, 1336, 1477, 1633,697, 770, 852, 941]
 fig, axes = plt.subplots(nrows=int(np.ceil(len(freqs)/2)), ncols=2, figsize=(12, 8))
 
 counter = 0
+thd = 0.0
 for F in freqs:
     Fs, samples = wavfile.read(f'{F}.wav')
 
@@ -26,9 +27,11 @@ for F in freqs:
     argmax = np.argmax(X2)
     X2 =X2[argmax:]
 
-    thd = np.sqrt(np.sum(X2[2:]**2))/X2[0]*100
+    this_thd = np.sqrt(np.sum(X2[2:]**2))/X2[0]*100
+    print(f'{F} Hz: THD {this_thd:.2f}%')
 
-    print(f'THD {thd:.2f}%')
+    thd += this_thd
+
 
     row = counter//2
     col = counter % 2
@@ -39,6 +42,9 @@ for F in freqs:
     axes[row,col].set_ylabel('Spectrum Magnitude')
     axes[row,col].set_xlim(-Fs / 2, Fs / 2)
     counter += 1
+
+thd = thd/len(freqs)
+print(f'avg THD {thd:.2f}%')
 
 fig.tight_layout()
 plt.show()
