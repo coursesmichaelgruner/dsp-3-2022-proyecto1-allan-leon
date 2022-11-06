@@ -8,7 +8,7 @@ import pyaudio
 import math
 import time
 import numpy as np
-import matplotlib.pyplot as plt
+
 
 text_language = 'es'
 mixer.init()
